@@ -62,7 +62,7 @@ export default function Home() {
                 <Cloud size={12} /> Cloud Sync
               </span>
             </div>
-            <p className="text-gray-500 font-medium text-sm md:text-base">Kalkulator HPP & Margin Profit UMKM</p>
+            <p className="text-gray-500 font-medium text-sm md:text-base">Kalkulator HPP & Margin Profit</p>
           </div>
           
           <div className="flex items-center gap-3">
