@@ -30,7 +30,7 @@ export default function Home() {
         <header className="flex justify-between items-center mb-10 mt-4">
           <div>
             <h1 className="text-4xl font-extrabold text-primary mb-1 tracking-tight">HitungIN</h1>
-            <p className="text-gray-500 font-medium text-sm md:text-base">Kalkulator HPP & Margin Profit UMKM</p>
+            <p className="text-gray-500 font-medium text-sm md:text-base">Kalkulator HPP & Margin Profit</p>
           </div>
           <Link
             href="/project/new"
