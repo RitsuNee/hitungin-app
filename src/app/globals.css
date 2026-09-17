@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #fdfdfd;
+  --color-foreground: #1a1a1a;
+
+  /* Custom Palette */
+  --color-primary: #570083;
+  --color-primary-light: #7010a3;
+  
+  --color-secondary: #FF9301;
+  --color-secondary-light: #ff9f1f;
+  
+  --color-accent: #ECD14E;
+  
+  --color-success: #7BC160;
+  --color-success-light: #8bcd70;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
