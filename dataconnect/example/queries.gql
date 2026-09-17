@@ -1,0 +1,137 @@
+mutation CreateUser($email: String!, $displayName: String!) @auth(level: USER) {
+  user_insert(data: { id_expr: "auth.uid", email: $email, displayName: $displayName })
+}
+
+mutation UpdateUser($displayName: String!) @auth(level: USER) {
+  user_update(key: { id_expr: "auth.uid" }, data: { displayName: $displayName })
+}
+
+mutation DeleteUser @auth(level: USER) {
+  user_delete(key: { id_expr: "auth.uid" })
+}
+
+query GetCurrentUser @auth(level: USER) {
+  user(key: { id_expr: "auth.uid" }) {
+    email
+    displayName
+    avatarUrl
+  }
+}
+
+query ListUsers @auth(level: PUBLIC, insecureReason: "Listing users is required for team collaboration features.") {
+  users {
+    id
+    displayName
+    avatarUrl
+  }
+}
+
+mutation CreateProject($name: String!, $description: String) @auth(level: USER) {
+  project_insert(data: { name: $name, description: $description, ownerId_expr: "auth.uid" })
+}
+
+mutation UpdateProject($id: UUID!, $name: String) @auth(level: USER) {
+  project_update(id: $id, data: { name: $name })
+}
+
+mutation DeleteProject($id: UUID!) @auth(level: USER) {
+  project_delete(id: $id)
+}
+
+query GetProject($id: UUID!) @auth(level: USER) {
+  project(id: $id) {
+    name
+    description
+    deadline
+    owner { displayName }
+  }
+}
+
+query ListProjects @auth(level: USER) {
+  projects {
+    id
+    name
+    deadline
+  }
+}
+
+mutation CreateTask($title: String!, $status: String!, $projectId: UUID!) @auth(level: USER) {
+  task_insert(data: { title: $title, status: $status, projectId: $projectId })
+}
+
+mutation UpdateTask($id: UUID!, $status: String) @auth(level: USER) {
+  task_update(id: $id, data: { status: $status })
+}
+
+mutation DeleteTask($id: UUID!) @auth(level: USER) {
+  task_delete(id: $id)
+}
+
+query GetTask($id: UUID!) @auth(level: USER) {
+  task(id: $id) {
+    title
+    status
+    dueDate
+    project { name }
+  }
+}
+
+query ListTasks($projectId: UUID!) @auth(level: USER) {
+  tasks(where: { projectId: { eq: $projectId } }) {
+    id
+    title
+    status
+  }
+}
+
+mutation CreateComment($content: String!, $taskId: UUID!) @auth(level: USER) {
+  comment_insert(data: { content: $content, taskId: $taskId, authorId_expr: "auth.uid" })
+}
+
+mutation UpdateComment($id: UUID!, $content: String) @auth(level: USER) {
+  comment_update(id: $id, data: { content: $content })
+}
+
+mutation DeleteComment($id: UUID!) @auth(level: USER) {
+  comment_delete(id: $id)
+}
+
+query GetComment($id: UUID!) @auth(level: USER) {
+  comment(id: $id) {
+    content
+    createdAt
+    author { displayName }
+  }
+}
+
+query ListComments($taskId: UUID!) @auth(level: USER) {
+  comments(where: { taskId: { eq: $taskId } }) {
+    content
+    author { displayName }
+  }
+}
+
+mutation CreateTeamMember($projectId: UUID!, $role: String!) @auth(level: USER) {
+  teamMember_insert(data: { projectId: $projectId, userId_expr: "auth.uid", role: $role })
+}
+
+mutation UpdateTeamMember($projectId: UUID!, $role: String!) @auth(level: USER) {
+  teamMember_update(key: { projectId: $projectId, userId_expr: "auth.uid" }, data: { role: $role })
+}
+
+mutation DeleteTeamMember($projectId: UUID!) @auth(level: USER) {
+  teamMember_delete(key: { projectId: $projectId, userId_expr: "auth.uid" })
+}
+
+query GetTeamMember($projectId: UUID!, $userId: UUID!) @auth(level: USER) {
+  teamMember(key: { projectId: $projectId, userId: $userId }) {
+    role
+  }
+}
+
+query ListTeamMembers($projectId: UUID!) @auth(level: USER) {
+  teamMembers(where: { projectId: { eq: $projectId } }) {
+    user { displayName }
+    role
+  }
+}

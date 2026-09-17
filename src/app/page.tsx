@@ -2,21 +2,40 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getProjects, deleteProject } from '@/lib/storage';
+import { getProjects, deleteProject } from '@/lib/firestore';
 import { Project } from '@/types';
-import { Plus, Trash2, Edit } from 'lucide-react';
+import { Plus, Trash2, Edit, LogIn, LogOut, Cloud } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
+  const { user, loading, loginWithGoogle, logout } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
-    setProjects(getProjects());
-  }, []);
+    if (user) {
+      setFetching(true);
+      getProjects(user.uid)
+        .then((data) => {
+          setProjects(data);
+          setFetching(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching projects", error);
+          setFetching(false);
+        });
+    } else {
+      setProjects([]);
+      setFetching(false);
+    }
+  }, [user]);
 
-  const handleDelete = (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menghapus proyek ini?')) {
-      deleteProject(id);
-      setProjects(getProjects());
+  const handleDelete = async (id: string) => {
+    if (!user) return;
+    if (confirm('Apakah Anda yakin ingin menghapus proyek ini secara permanen dari Cloud?')) {
+      await deleteProject(id, user.uid);
+      const data = await getProjects(user.uid);
+      setProjects(data);
     }
   };
 
@@ -24,25 +43,80 @@ export default function Home() {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-pulse text-primary font-bold text-xl">Memuat HitungIN...</div>
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto">
-        <header className="flex justify-between items-center mb-10 mt-4">
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 mt-4">
           <div>
-            <h1 className="text-4xl font-extrabold text-primary mb-1 tracking-tight">HitungIN</h1>
-            <p className="text-gray-500 font-medium text-sm md:text-base">Kalkulator HPP & Margin Profit</p>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-4xl font-extrabold text-primary tracking-tight">HitungIN</h1>
+              <span className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                <Cloud size={12} /> Cloud Sync
+              </span>
+            </div>
+            <p className="text-gray-500 font-medium text-sm md:text-base">Kalkulator HPP & Margin Profit UMKM</p>
           </div>
-          <Link
-            href="/project/new"
-            className="flex items-center gap-2 bg-secondary text-white font-semibold px-5 py-3 rounded-2xl shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all"
-          >
-            <Plus size={20} strokeWidth={2.5} />
-            <span className="hidden sm:inline">Hitung Produk Baru</span>
-            <span className="sm:hidden">Baru</span>
-          </Link>
+          
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <div className="flex items-center gap-2 mr-2">
+                  {user.photoURL && <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-gray-200" />}
+                  <div className="hidden sm:block text-sm font-bold text-gray-700">{user.displayName}</div>
+                </div>
+                <button
+                  onClick={logout}
+                  className="p-2 text-gray-500 hover:text-red-500 bg-gray-100 hover:bg-red-50 rounded-xl transition-colors"
+                  title="Logout"
+                >
+                  <LogOut size={20} />
+                </button>
+                <Link
+                  href="/project/new"
+                  className="flex items-center gap-2 bg-secondary text-white font-semibold px-5 py-3 rounded-2xl shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all"
+                >
+                  <Plus size={20} strokeWidth={2.5} />
+                  <span className="hidden sm:inline">Produk Baru</span>
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={loginWithGoogle}
+                className="flex items-center gap-2 bg-white text-gray-800 border border-gray-200 font-bold px-5 py-3 rounded-2xl shadow-sm hover:bg-gray-50 transition-all"
+              >
+                <LogIn size={20} />
+                Login Google
+              </button>
+            )}
+          </div>
         </header>
 
-        {projects.length === 0 ? (
+        {!user ? (
+          <div className="text-center py-24 bg-white rounded-3xl shadow-sm border border-gray-100/50">
+            <div className="bg-accent/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Cloud size={32} className="text-secondary" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Simpan ke Cloud</h3>
+            <p className="text-gray-500 mb-8 max-w-sm mx-auto">Login dengan akun Google untuk menyimpan data HPP Anda secara online agar bisa dibuka dari HP atau laptop mana saja.</p>
+            <button
+              onClick={loginWithGoogle}
+              className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-6 py-3 rounded-2xl hover:bg-primary-light transition-colors shadow-sm hover:shadow-md"
+            >
+              <LogIn size={20} />
+              Mulai Sekarang (Gratis)
+            </button>
+          </div>
+        ) : fetching ? (
+          <div className="text-center py-20 text-gray-500 font-medium animate-pulse">Menyinkronkan data dari cloud...</div>
+        ) : projects.length === 0 ? (
           <div className="text-center py-24 bg-white rounded-3xl shadow-sm border border-gray-100/50">
             <div className="bg-accent/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Plus size={32} className="text-secondary" />

@@ -1,23 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { saveProject } from '@/lib/storage';
+import { saveProject } from '@/lib/firestore';
 import { Project } from '@/types';
 import Link from 'next/link';
 import { ArrowLeft, PackagePlus } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function NewProject() {
   const router = useRouter();
+  const { user, loading } = useAuth();
+  
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [portions, setPortions] = useState(1);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) return null;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!name.trim()) return;
+    if (!name.trim() || isSaving) return;
 
+    setIsSaving(true);
     const newProject: Project = {
       id: Date.now().toString(),
       name,
@@ -30,8 +42,14 @@ export default function NewProject() {
       updatedAt: Date.now(),
     };
 
-    saveProject(newProject);
-    router.push(`/project/${newProject.id}`);
+    try {
+      await saveProject(user.uid, newProject);
+      router.push(`/project/${newProject.id}`);
+    } catch (error) {
+      console.error("Error saving project", error);
+      alert("Gagal menyimpan proyek. Pastikan Firestore rules Anda mengizinkan penulisan.");
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -106,9 +124,10 @@ export default function NewProject() {
             <div className="pt-6 mt-8 border-t border-gray-100">
               <button
                 type="submit"
-                className="w-full bg-primary text-white font-bold text-lg py-4 rounded-2xl hover:bg-primary-light hover:-translate-y-0.5 hover:shadow-lg transition-all"
+                disabled={isSaving}
+                className="w-full bg-primary text-white font-bold text-lg py-4 rounded-2xl hover:bg-primary-light hover:-translate-y-0.5 hover:shadow-lg transition-all disabled:opacity-70 disabled:transform-none"
               >
-                Mulai Hitung HPP
+                {isSaving ? 'Menyimpan ke Cloud...' : 'Mulai Hitung HPP'}
               </button>
             </div>
           </form>

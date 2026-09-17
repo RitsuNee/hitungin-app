@@ -3,15 +3,19 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getProject, saveProject } from '@/lib/storage';
+import { getProject, saveProject } from '@/lib/firestore';
 import { Project, Ingredient } from '@/types';
-import { ArrowLeft, Plus, Trash2, Save, Calculator, CheckCircle2, AlertTriangle, XCircle, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Save, Calculator, CheckCircle2, AlertTriangle, XCircle, ShoppingBag, Cloud } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProjectDetail({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
+  const { user, loading: authLoading } = useAuth();
+  
   const [project, setProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Form states for new ingredient
   const [ingName, setIngName] = useState('');
@@ -21,19 +25,37 @@ export default function ProjectDetail({ params }: { params: Promise<{ id: string
   const [ingUsedAmount, setIngUsedAmount] = useState('');
 
   useEffect(() => {
-    const data = getProject(id);
-    if (data) {
-      setProject(data);
-    } else {
+    if (authLoading) return;
+    if (!user) {
       router.push('/');
+      return;
     }
-    setLoading(false);
-  }, [id, router]);
 
-  const handleSave = () => {
-    if (project) {
-      saveProject(project);
-      alert('Proyek berhasil disimpan!');
+    getProject(id, user.uid).then((data) => {
+      if (data) {
+        setProject(data);
+      } else {
+        alert("Proyek tidak ditemukan atau Anda tidak memiliki akses.");
+        router.push('/');
+      }
+      setFetching(false);
+    }).catch(err => {
+      console.error(err);
+      setFetching(false);
+    });
+  }, [id, user, authLoading, router]);
+
+  const handleSave = async () => {
+    if (project && user) {
+      setIsSaving(true);
+      try {
+        await saveProject(user.uid, project);
+        alert('Tersimpan di Cloud!');
+      } catch (err) {
+        console.error(err);
+        alert('Gagal menyimpan ke Cloud.');
+      }
+      setIsSaving(false);
     }
   };
 
@@ -65,7 +87,6 @@ export default function ProjectDetail({ params }: { params: Promise<{ id: string
       ingredients: [...project.ingredients, newIng],
     });
 
-    // Reset form
     setIngName('');
     setIngPrice('');
     setIngPurAmount('');
@@ -84,9 +105,11 @@ export default function ProjectDetail({ params }: { params: Promise<{ id: string
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
   };
 
-  if (loading || !project) return (
+  if (authLoading || fetching || !project) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="animate-pulse text-primary font-bold text-xl">Memuat...</div>
+      <div className="animate-pulse text-primary font-bold text-xl flex items-center gap-2">
+        <Cloud className="animate-bounce" /> Memuat dari Cloud...
+      </div>
     </div>
   );
 
@@ -108,10 +131,11 @@ export default function ProjectDetail({ params }: { params: Promise<{ id: string
           </Link>
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 bg-success text-white font-bold px-6 py-2.5 rounded-xl hover:bg-success-light hover:-translate-y-0.5 hover:shadow-md transition-all"
+            disabled={isSaving}
+            className="flex items-center gap-2 bg-success text-white font-bold px-6 py-2.5 rounded-xl hover:bg-success-light hover:-translate-y-0.5 hover:shadow-md transition-all disabled:opacity-70 disabled:transform-none"
           >
             <Save size={20} />
-            Simpan Perubahan
+            {isSaving ? 'Menyimpan...' : 'Simpan ke Cloud'}
           </button>
         </div>
 
@@ -255,7 +279,6 @@ export default function ProjectDetail({ params }: { params: Promise<{ id: string
             
             {/* Simulasi Harga Jual */}
             <div className="bg-gradient-to-br from-primary to-primary-light rounded-3xl shadow-md p-8 text-white relative overflow-hidden">
-              {/* Decorative circle */}
               <div className="absolute -top-12 -right-12 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
               
               <h2 className="text-lg font-bold mb-2 flex items-center gap-2 text-primary-50 relative z-10">
