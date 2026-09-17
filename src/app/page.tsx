@@ -48,7 +48,7 @@ export default function Home() {
               <Plus size={32} className="text-secondary" />
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-2">Belum ada produk</h3>
-            <p className="text-gray-500 mb-8 max-w-sm mx-auto">Mulai hitung Harga Pokok Produksi untuk jualan pertamamu agar makin cuan!</p>
+            <p className="text-gray-500 mb-8 max-w-sm mx-auto">Mulai hitung Harga Pokok Produksi</p>
             <Link
               href="/project/new"
               className="inline-flex items-center gap-2 bg-primary text-white font-semibold px-6 py-3 rounded-2xl hover:bg-primary-light transition-colors shadow-sm hover:shadow-md"
