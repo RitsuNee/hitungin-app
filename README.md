@@ -21,10 +21,10 @@
 
 ###  Key Features
 
-* ** Fast & Responsive:** Optimized for speed and works flawlessly across all device sizes.
-* ** Intuitive UI/UX:** Clean, modern interface designed for ease of use without unnecessary clutter.
-* ** Dark/Light Mode:** Seamlessly adapts to your preferred viewing environment. *(Edit if applicable)*
-* ** Cloud Deployed:** Instantly accessible online via Vercel with zero setup required for end-users.
+* **Fast & Responsive:** Optimized for speed and works flawlessly across all device sizes.
+* **Intuitive UI/UX:** Clean, modern interface designed for ease of use without unnecessary clutter.
+* **Dark/Light Mode:** Seamlessly adapts to your preferred viewing environment. *(Edit if applicable)*
+* **Cloud Deployed:** Instantly accessible online via Vercel with zero setup required for end-users.
 
 ## 💻 Tech Stack
 
