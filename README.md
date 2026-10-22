@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <!-- Replace the image below with your actual project logo if you have one -->
+  <img src="https://github.com/RitsuNee/hitungin-app/blob/main/src/app/favicon.ico" alt="HitungIN Logo" width="150"/>
 
-## Getting Started
+  # 🧮 HitungIN
 
-First, run the development server:
+  **A fast, intuitive, and modern calculation web application.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  [![Deploy with Vercel](https://vercelbadge.vercel.app/api/RitsuNee/hitungin-app)](https://hitung-in-eight.vercel.app/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  [Live Demo](https://hitung-in-eight.vercel.app/) · [Report Bug](https://github.com/RitsuNee/hitungin-app/issues) · [Request Feature](https://github.com/RitsuNee/hitungin-app/issues)
+</div>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📖 About The Project
 
-## Learn More
+**HitungIN** is a web-based application designed to make calculations and data processing simple, fast, and accessible from anywhere. Built with modern web technologies, it offers a seamless and responsive user experience whether you are on a desktop or a mobile device.
 
-To learn more about Next.js, take a look at the following resources:
+###  Key Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* ** Fast & Responsive:** Optimized for speed and works flawlessly across all device sizes.
+* ** Intuitive UI/UX:** Clean, modern interface designed for ease of use without unnecessary clutter.
+* ** Dark/Light Mode:** Seamlessly adapts to your preferred viewing environment. *(Edit if applicable)*
+* ** Cloud Deployed:** Instantly accessible online via Vercel with zero setup required for end-users.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 💻 Tech Stack
 
-## Deploy on Vercel
+This project is built utilizing modern frameworks and libraries to ensure performance and maintainability:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **Frontend:** [React.js](https://reactjs.org/) / [Next.js](https://nextjs.org/) *(Adjust based on your exact framework)*
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) *(Adjust if you use plain CSS/SCSS/Chakra)*
+* **Deployment:** [Vercel](https://vercel.com/)
+* **Package Manager:** npm / yarn / pnpm
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Live Demo
+
+Check out the live application here: **[HitungIN Live Demo](https://hitung-in-eight.vercel.app/)**
+
+---
+
+## 🛠️ Getting Started
+
+Want to run HitungIN locally on your machine? Follow these simple steps.
+
+### Prerequisites
+
+Make sure you have Node.js and a package manager installed:
+* [Node.js](https://nodejs.org/) (v16.0 or higher recommended)
+* npm, yarn, or pnpm
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/RitsuNee/hitungin-app.git](https://github.com/RitsuNee/hitungin-app.git)
